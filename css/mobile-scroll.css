@@ -1,23 +1,28 @@
-/* New Mobile Scrolling System */
+/* Mobile Scrolling System */
 @media (max-width: 768px) {
     body {
-        height: 100%;
-        overflow-y: auto !important;
+        touch-action: pan-y;
         -webkit-overflow-scrolling: touch;
-        position: relative;
-    }
-
-    .game-wrapper {
-        min-height: 100%;
-        padding-bottom: 120px; /* Space for mobile controls */
-        position: relative;
-        z-index: 1;
     }
 
     #gamePage {
-        min-height: 100%;
-        position: relative;
-        z-index: 1;
+        padding-top: 80px;
+        padding-bottom: 120px;
+        min-height: 100vh;
+        touch-action: pan-y;
+        -webkit-tap-highlight-color: transparent;
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        user-select: none;
+    }
+
+    .game-canvas {
+        touch-action: pan-y;
+        max-width: 100%;
+        height: auto;
+        margin: 0 auto;
+        display: block;
+        -webkit-tap-highlight-color: transparent;
     }
 
     /* Fixed Elements */
@@ -43,21 +48,10 @@
         left: 0;
         right: 0;
         z-index: 100;
+        background: rgba(0, 0, 0, 0.8);
     }
 
-    /* Game Content */
-    .game-canvas {
-        margin: 0 auto;
-        display: block;
-        max-width: 100%;
-        height: auto;
-    }
-
-    /* Ensure content is scrollable */
-    .scrollable-content {
-        padding-top: 80px;  /* Space for header */
-        min-height: calc(100vh + 200px); /* Force scrollable area */
-        position: relative;
-        z-index: 1;
+    * {
+        touch-action: pan-y;
     }
 }
