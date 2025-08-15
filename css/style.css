@@ -34,6 +34,8 @@ body {
     width: 100%;
     height: auto;
     padding-top: 60px; /* Space for VIP banner */
+    position: static;
+    overflow-y: auto;
 }
 
 .game-canvas {
@@ -80,6 +82,7 @@ body {
         background: rgba(0, 0, 0, 0.8);
         padding: 1rem;
         z-index: 100;
+        pointer-events: auto;
     }
 }
 

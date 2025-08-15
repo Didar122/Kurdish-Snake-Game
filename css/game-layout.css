@@ -32,6 +32,9 @@
 /* Game Container Layout */
 #gamePage {
     padding-top: 80px;
-    margin-bottom: 120px;
-    min-height: 100vh;
+    padding-bottom: 120px;
+    position: relative;
+    height: auto;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
 }
