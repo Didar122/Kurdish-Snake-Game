@@ -2254,19 +2254,26 @@ class KurdishSnakeGame {
             
             particle.style.animation = 'coinFade 2s ease-out forwards'; // Slower animation
             
-            // Use the same positioning approach as other skins
+            // Use the same positioning approach as other skins but with mobile scaling considerations
             const canvas = document.getElementById('gameCanvas');
             const canvasRect = canvas.getBoundingClientRect();
-            const parentRect = canvas.offsetParent ? canvas.offsetParent.getBoundingClientRect() : {left:0,top:0};
-            const relLeft = canvasRect.left - parentRect.left;
-            const relTop = canvasRect.top - parentRect.top;
+            const scale = canvas.width / canvasRect.width; // Get the canvas scaling factor
             
-            // Place particle absolutely inside the canvas's parent
-            particle.style.left = (relLeft + x + offsetX) + 'px';
-            particle.style.top = (relTop + y + offsetY) + 'px';
+            // Adjust coordinates for any scaling
+            const adjustedX = x / scale;
+            const adjustedY = y / scale;
             
-            // Append to canvas parent instead of body
-            (canvas.parentElement || document.body).appendChild(particle);
+            // Place particle relative to canvas
+            particle.style.position = 'absolute';
+            particle.style.left = (adjustedX + offsetX) + 'px';
+            particle.style.top = (adjustedY + offsetY) + 'px';
+            
+            // Create a positioned wrapper if needed
+            const wrapper = canvas.parentElement;
+            if (getComputedStyle(wrapper).position === 'static') {
+                wrapper.style.position = 'relative';
+            }
+            wrapper.appendChild(particle);
             
             // Remove after animation
             setTimeout(() => particle.remove(), 2000);
