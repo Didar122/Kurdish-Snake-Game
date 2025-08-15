@@ -7,39 +7,37 @@
     -webkit-tap-highlight-color: transparent;
 }
 
-html {
+html, body {
+    margin: 0;
+    padding: 0;
     height: 100%;
     width: 100%;
-    overflow-x: hidden;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
 }
 
 body {
-    margin: 0;
-    padding: 0;
-    min-height: 100%;
-    width: 100%;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    overflow-x: hidden;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
     position: relative;
+    background-color: #000;
 }
 
 /* Game Container */
 #gamePage {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: auto;
+    min-height: 100%;
+    padding-bottom: 100px;
+}
+
+.game-wrapper {
     width: 100%;
     max-width: 100%;
-    min-height: 100vh;
-    overflow-x: hidden;
-    overflow-y: scroll;
+    overflow-y: auto;
     -webkit-overflow-scrolling: touch;
-    touch-action: pan-y;
-    -webkit-touch-action: pan-y;
-    position: relative;
 }
 
 .game-canvas {
@@ -49,26 +47,28 @@ body {
     position: relative;
     z-index: 2;
     margin: 0 auto;
-    touch-action: pan-y;
-    -webkit-touch-action: pan-y;
 }
 
 /* Mobile Responsiveness */
 @media (max-width: 768px) {
+    body {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        overflow-y: scroll !important;
+        -webkit-overflow-scrolling: touch !important;
+    }
+
     .container {
         padding-left: 1rem;
         padding-right: 1rem;
         width: 100%;
         max-width: 100%;
-        overflow-y: scroll;
-        -webkit-overflow-scrolling: touch;
     }
 
     #gameCanvas {
         max-width: 100%;
         height: auto;
-        touch-action: pan-y;
-        -webkit-touch-action: pan-y;
     }
     
     .glass-morphism {
@@ -79,10 +79,26 @@ body {
     }
 
     #gamePage {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
         height: auto;
-        min-height: 100vh;
+        min-height: 100%;
+        padding-bottom: 50vh;
         overflow-y: scroll !important;
         -webkit-overflow-scrolling: touch !important;
+        -ms-overflow-style: -ms-autohiding-scrollbar;
+    }
+
+    .mobile-controls {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        padding: 1rem;
+        z-index: 100;
     }
 }
 
