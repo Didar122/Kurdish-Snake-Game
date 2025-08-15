@@ -10,8 +10,11 @@
 html, body {
     margin: 0;
     padding: 0;
-    height: 100%;
     width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
 }
 
 body {
@@ -24,20 +27,9 @@ body {
 
 /* Game Container */
 #gamePage {
-    position: absolute;
-    top: 0;
-    left: 0;
     width: 100%;
     height: auto;
-    min-height: 100%;
-    padding-bottom: 100px;
-}
-
-.game-wrapper {
-    width: 100%;
-    max-width: 100%;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
+    padding-top: 60px; /* Space for VIP banner */
 }
 
 .game-canvas {
@@ -51,14 +43,6 @@ body {
 
 /* Mobile Responsiveness */
 @media (max-width: 768px) {
-    body {
-        position: fixed;
-        width: 100%;
-        height: 100%;
-        overflow-y: scroll !important;
-        -webkit-overflow-scrolling: touch !important;
-    }
-
     .container {
         padding-left: 1rem;
         padding-right: 1rem;
@@ -79,16 +63,9 @@ body {
     }
 
     #gamePage {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: auto;
-        min-height: 100%;
-        padding-bottom: 50vh;
-        overflow-y: scroll !important;
-        -webkit-overflow-scrolling: touch !important;
-        -ms-overflow-style: -ms-autohiding-scrollbar;
+        padding-top: 80px; /* More space for VIP banner on mobile */
+        margin-bottom: 120px; /* Space for mobile controls */
+        min-height: 100vh;
     }
 
     .mobile-controls {
