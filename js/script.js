@@ -2254,22 +2254,38 @@ class KurdishSnakeGame {
             
             particle.style.animation = 'coinFade 2s ease-out forwards'; // Slower animation
             
-            // Use the same positioning approach as other skins but with mobile scaling considerations
             const canvas = document.getElementById('gameCanvas');
-            const canvasRect = canvas.getBoundingClientRect();
-            const scale = canvas.width / canvasRect.width; // Get the canvas scaling factor
-            
-            // Adjust coordinates for any scaling
-            const adjustedX = x / scale;
-            const adjustedY = y / scale;
-            
-            // Place particle relative to canvas
-            particle.style.position = 'absolute';
-            particle.style.left = (adjustedX + offsetX) + 'px';
-            particle.style.top = (adjustedY + offsetY) + 'px';
-            
-            // Create a positioned wrapper if needed
             const wrapper = canvas.parentElement;
+            
+            // Detect if we're on mobile
+            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+            
+            if (isMobile) {
+                // Mobile-specific positioning
+                const rect = canvas.getBoundingClientRect();
+                const scaleX = canvas.width / rect.width;
+                const scaleY = canvas.height / rect.height;
+                
+                // Calculate touch coordinates relative to canvas
+                const touchX = (x - offsetX) * scaleX;
+                const touchY = (y - offsetY) * scaleY;
+                
+                // Convert canvas coordinates to screen coordinates
+                const screenX = touchX / scaleX;
+                const screenY = touchY / scaleY;
+                
+                particle.style.position = 'absolute';
+                particle.style.transform = 'translate(-50%, -50%)';
+                particle.style.left = screenX + 'px';
+                particle.style.top = screenY + 'px';
+            } else {
+                // Desktop positioning (keeping the working approach)
+                particle.style.position = 'absolute';
+                particle.style.left = (x + offsetX) + 'px';
+                particle.style.top = (y + offsetY) + 'px';
+            }
+            
+            // Ensure proper positioning context
             if (getComputedStyle(wrapper).position === 'static') {
                 wrapper.style.position = 'relative';
             }
