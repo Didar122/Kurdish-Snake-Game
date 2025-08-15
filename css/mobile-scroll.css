@@ -1,20 +1,16 @@
 /* Mobile scroll fixes for iOS */
 @media (max-width: 768px) {
-    .scroll-container {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        overflow-y: scroll;
-        -webkit-overflow-scrolling: touch;
-        z-index: 1;
+    body {
+        position: relative;
+        min-height: 100vh;
+        background: inherit;
     }
 
     #gamePage {
-        -webkit-transform: translateZ(0);
-        transform: translateZ(0);
-        background-color: #000;
+        position: relative;
+        min-height: 100vh;
+        background: inherit;
+        -webkit-overflow-scrolling: touch;
     }
 
     .mobile-controls {
@@ -25,13 +21,18 @@
         background: rgba(0, 0, 0, 0.8);
         padding: 1rem;
         z-index: 100;
-        transform: translateZ(0);
-        -webkit-transform: translateZ(0);
     }
 
     #vipBanner,
     #gamePage .flex.justify-between {
-        transform: translateZ(0);
-        -webkit-transform: translateZ(0);
+        position: fixed;
+        background: rgba(0, 0, 0, 0.8);
+    }
+
+    .game-canvas {
+        max-width: 100%;
+        height: auto;
+        margin: 1rem auto;
+        display: block;
     }
 }
