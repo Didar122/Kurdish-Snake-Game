@@ -2263,21 +2263,32 @@ class KurdishSnakeGame {
             if (isMobile) {
                 // Mobile-specific positioning
                 const rect = canvas.getBoundingClientRect();
-                const scaleX = canvas.width / rect.width;
-                const scaleY = canvas.height / rect.height;
+                const isPortrait = window.innerHeight > window.innerWidth;
                 
-                // Calculate touch coordinates relative to canvas
-                const touchX = (x - offsetX) * scaleX;
-                const touchY = (y - offsetY) * scaleY;
+                // Get the canvas scaling and position relative to its container
+                const containerRect = wrapper.getBoundingClientRect();
+                const canvasTop = rect.top - containerRect.top;
+                const canvasLeft = rect.left - containerRect.left;
                 
-                // Convert canvas coordinates to screen coordinates
-                const screenX = touchX / scaleX;
-                const screenY = touchY / scaleY;
+                // Calculate position based on orientation
+                let finalX, finalY;
+                
+                if (isPortrait) {
+                    // Apply orientation-specific adjustments for portrait mode
+                    const portraitScaleX = rect.width / canvas.width;
+                    const portraitScaleY = rect.height / canvas.height;
+                    finalX = x * portraitScaleX;
+                    finalY = y * portraitScaleY;
+                } else {
+                    // Landscape mode - use direct positioning as it works correctly
+                    finalX = x;
+                    finalY = y;
+                }
                 
                 particle.style.position = 'absolute';
                 particle.style.transform = 'translate(-50%, -50%)';
-                particle.style.left = screenX + 'px';
-                particle.style.top = screenY + 'px';
+                particle.style.left = (finalX + offsetX) + 'px';
+                particle.style.top = (finalY + offsetY) + 'px';
             } else {
                 // Desktop positioning (keeping the working approach)
                 particle.style.position = 'absolute';
