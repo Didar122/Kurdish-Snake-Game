@@ -7,28 +7,39 @@
     -webkit-tap-highlight-color: transparent;
 }
 
-html, body {
-    margin: 0;
-    padding: 0;
-    min-height: 100vh;
+html {
+    height: 100%;
     width: 100%;
     overflow-x: hidden;
     overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+    width: 100%;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    position: relative;
 }
 
 /* Game Container */
 #gamePage {
     width: 100%;
     max-width: 100%;
+    min-height: 100vh;
     overflow-x: hidden;
-    overflow-y: auto;
+    overflow-y: scroll;
     -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
+    -webkit-touch-action: pan-y;
+    position: relative;
 }
 
 .game-canvas {
@@ -38,6 +49,8 @@ body {
     position: relative;
     z-index: 2;
     margin: 0 auto;
+    touch-action: pan-y;
+    -webkit-touch-action: pan-y;
 }
 
 /* Mobile Responsiveness */
@@ -47,11 +60,15 @@ body {
         padding-right: 1rem;
         width: 100%;
         max-width: 100%;
+        overflow-y: scroll;
+        -webkit-overflow-scrolling: touch;
     }
 
     #gameCanvas {
         max-width: 100%;
         height: auto;
+        touch-action: pan-y;
+        -webkit-touch-action: pan-y;
     }
     
     .glass-morphism {
@@ -59,6 +76,13 @@ body {
         margin-left: 0;
         margin-right: 0;
         padding: 1rem;
+    }
+
+    #gamePage {
+        height: auto;
+        min-height: 100vh;
+        overflow-y: scroll !important;
+        -webkit-overflow-scrolling: touch !important;
     }
 }
 
