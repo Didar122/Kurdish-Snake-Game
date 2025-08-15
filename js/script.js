@@ -2235,8 +2235,8 @@ class KurdishSnakeGame {
             // Only create particles occasionally
             if (Math.random() > 0.3) return; // 30% chance to create particles
             
-            const offsetX = (Math.random() - 0.5) * 20; // Reduced horizontal spread
-            const offsetY = (Math.random() - 0.5) * 10; // Significantly reduced vertical spread
+            const offsetX = (Math.random() - 0.5) * 10; // Very small horizontal spread
+            const offsetY = (Math.random() - 0.5) * 5; // Very small vertical spread
             
             const particle = document.createElement('div');
             particle.className = 'vip-particle';
@@ -2257,44 +2257,23 @@ class KurdishSnakeGame {
             const canvas = document.getElementById('gameCanvas');
             const wrapper = canvas.parentElement;
             
-            // Detect if we're on mobile
-            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+            // Get canvas dimensions and position
+            const rect = canvas.getBoundingClientRect();
             
-            if (isMobile) {
-                // Mobile-specific positioning
-                const rect = canvas.getBoundingClientRect();
-                const isPortrait = window.innerHeight > window.innerWidth;
-                
-                // Get the canvas scaling and position relative to its container
-                const containerRect = wrapper.getBoundingClientRect();
-                const canvasTop = rect.top - containerRect.top;
-                const canvasLeft = rect.left - containerRect.left;
-                
-                // Calculate position based on orientation
-                let finalX, finalY;
-                
-                if (isPortrait) {
-                    // Apply orientation-specific adjustments for portrait mode
-                    const portraitScaleX = rect.width / canvas.width;
-                    const portraitScaleY = rect.height / canvas.height;
-                    finalX = x * portraitScaleX;
-                    finalY = y * portraitScaleY;
-                } else {
-                    // Landscape mode - use direct positioning as it works correctly
-                    finalX = x;
-                    finalY = y;
-                }
-                
-                particle.style.position = 'absolute';
-                particle.style.transform = 'translate(-50%, -50%)';
-                particle.style.left = (finalX + offsetX) + 'px';
-                particle.style.top = (finalY + offsetY) + 'px';
-            } else {
-                // Desktop positioning (keeping the working approach)
-                particle.style.position = 'absolute';
-                particle.style.left = (x + offsetX) + 'px';
-                particle.style.top = (y + offsetY) + 'px';
+            // Calculate position as percentages of canvas size
+            const percentX = (x / canvas.width) * 100;
+            const percentY = (y / canvas.height) * 100;
+            
+            // Ensure wrapper has relative positioning
+            if (getComputedStyle(wrapper).position === 'static') {
+                wrapper.style.position = 'relative';
             }
+            
+            // Position particle using percentages
+            particle.style.position = 'absolute';
+            particle.style.transform = 'translate(-50%, -50%)';
+            particle.style.left = `calc(${percentX}% + ${offsetX}px)`;
+            particle.style.top = `calc(${percentY}% + ${offsetY}px)`;
             
             // Ensure proper positioning context
             if (getComputedStyle(wrapper).position === 'static') {
