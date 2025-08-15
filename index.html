@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
     <title>Kurdish Snake Game v1.0.147</title>
     <!-- iOS app icons -->
     <link rel="apple-touch-icon" href="icons/icon-180.png">
@@ -17,7 +19,7 @@
     <link rel="stylesheet" href="css/void-animations.css">
     <link rel="stylesheet" href="css/vip-effects.css">
 </head>
-<body class="min-h-screen theme-light text-gray-100 transition-all duration-500">
+<body class="min-h-screen theme-light text-gray-100 transition-all duration-500 overflow-x-hidden">
     <!-- Galaxy Stars Container -->
     <div id="galaxyStars" class="galaxy-stars hidden"></div>
     
@@ -82,7 +84,9 @@
         <!-- Header -->
         <header class="text-center mb-12 slide-in">
             <div class="text-8xl mb-6 floating-animation">🐍</div>
-            <h1 id="gameTitle" class="text-5xl md:text-7xl font-bold neon-text mb-4 cursor-pointer hover:scale-105 transition-transform" data-translate="gameTitle">Kurdish Snake</h1>
+            <div class="relative min-h-[4rem]">
+                <h1 id="gameTitle" class="text-5xl md:text-7xl font-bold neon-text mb-4 cursor-pointer hover:scale-105 transition-transform whitespace-nowrap inline-block font-[Inter]" style="font-family: 'Inter', system-ui, -apple-system, sans-serif;" data-translate="gameTitle">Kurdish Snake</h1>
+            </div>
             <p class="text-xl md:text-2xl opacity-80" data-translate="gameDesc">Experience the classic game with Kurdish flair</p>
         </header>
 
@@ -176,7 +180,7 @@
     </div>
 
     <!-- Main Container -->
-    <div id="gamePage" class="container mx-auto px-4 py-8 max-w-6xl content-layer hidden">
+    <div id="gamePage" class="container mx-auto px-4 py-8 max-w-6xl content-layer hidden overflow-x-hidden box-border">
         <!-- Game Mode Indicator -->
         <div class="text-center mb-4">
             <div id="gameModeIndicator" class="inline-block glass-morphism px-6 py-2 rounded-full font-bold text-lg" data-translate="classicMode">
@@ -231,8 +235,8 @@
 
         <!-- Game Board -->
         <div class="flex justify-center mb-8">
-            <div class="glass-morphism rounded-3xl p-6 bounce-in">
-                <canvas id="gameCanvas" class="game-canvas" width="400" height="400"></canvas>
+            <div class="glass-morphism rounded-3xl p-6 bounce-in max-w-full box-border">
+                <canvas id="gameCanvas" class="game-canvas w-full max-w-[400px] h-auto" width="400" height="400"></canvas>
             </div>
         </div>
 
