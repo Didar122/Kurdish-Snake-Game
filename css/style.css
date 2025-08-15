@@ -13,6 +13,9 @@ html, body {
     min-height: 100vh;
     overflow-x: hidden;
     width: 100%;
+    touch-action: pan-y;
+    -ms-touch-action: pan-y;
+    -webkit-touch-action: pan-y;
 }
 
 body {
@@ -23,7 +26,7 @@ body {
 
 /* Game Container */
 #gamePage {
-    touch-action: none;
+    touch-action: pan-y;
     max-width: 100%;
     overflow-x: hidden;
 }
@@ -33,6 +36,8 @@ body {
     user-select: none;
     -webkit-user-select: none;
     -webkit-touch-callout: none;
+    position: relative;
+    z-index: 2;
 }
 
 /* Mobile Responsiveness */
@@ -88,6 +93,8 @@ body {
         overflow-x: hidden;
         width: 100%;
         position: relative;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
     }
 
     #gameTitle {

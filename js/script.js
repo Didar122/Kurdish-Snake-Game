@@ -31,6 +31,9 @@ class KurdishSnakeGame {
         
         this.food = { x: 15, y: 15 };
         this.modernFood = { x: 300, y: 300 };
+        this.specialFood = null;
+        this.specialFoodTimer = null;
+        this.specialFoodSpawnTimer = null;
         this.score = 0;
         
         this.highScore = parseInt(localStorage.getItem('kurdish-snake-high-score')) || 0;
@@ -56,33 +59,33 @@ class KurdishSnakeGame {
                 obstacles: 0, 
                 hasBot: false,
                 modernSpeed: 0.8,
-                modernObstacles: 3
+                modernObstacles: 0
             },
             normal: { 
                 speed: 300, 
                 coinMultiplier: 2, 
                 name: 'Normal', 
-                obstacles: 0, 
+                obstacles: 5, 
                 hasBot: false,
                 modernSpeed: 1.2,
                 modernObstacles: 5
             },
             hard: { 
-                speed: 250, 
+                speed: 300, 
                 coinMultiplier: 3, 
                 name: 'Hard', 
                 obstacles: 8, 
                 hasBot: false,
-                modernSpeed: 1.6,
+                modernSpeed: 1.2,
                 modernObstacles: 8
             },
             extreme: { 
-                speed: 250, 
+                speed: 300, 
                 coinMultiplier: 5, 
                 name: 'Extreme', 
                 obstacles: 12, 
                 hasBot: true,
-                modernSpeed: 2.0,
+                modernSpeed: 1.2,
                 modernObstacles: 12
             }
         };
@@ -212,6 +215,9 @@ class KurdishSnakeGame {
             indicator.innerHTML = '🚀 Modern Mode';
         }
         
+        // Update display with mode-specific high score
+        document.getElementById('highScore').textContent = mode === 'classic' ? this.classicHighScore : this.modernHighScore;
+        
         setTimeout(() => {
             const canvasReady = this.initCanvas();
             if (canvasReady) {
@@ -235,8 +241,8 @@ class KurdishSnakeGame {
     }
     
     updateHomeDisplay() {
-        const currentHighScore = this.gameMode === 'classic' ? this.classicHighScore : this.modernHighScore;
-        document.getElementById('homeHighScore').textContent = Math.max(this.classicHighScore, this.modernHighScore);
+        document.getElementById('homeClassicHighScore').textContent = this.classicHighScore;
+        document.getElementById('homeModernHighScore').textContent = this.modernHighScore;
         document.getElementById('homeCoins').textContent = this.coins;
         document.getElementById('currentDifficulty').textContent = this.difficultySettings[this.difficulty].name;
     }
@@ -432,6 +438,7 @@ class KurdishSnakeGame {
             this.gameRunning = true;
             this.startTime = Date.now();
             this.startTimer();
+            this.startSpecialFoodSpawnTimer();
             
             if (this.gameMode === 'classic') {
                 this.gameLoop = setInterval(() => this.updateClassic(), this.gameSpeed);
@@ -475,9 +482,69 @@ class KurdishSnakeGame {
         }
     }
     
+    startSpecialFoodSpawnTimer() {
+        // Clear any existing timers
+        if (this.specialFoodSpawnTimer) clearInterval(this.specialFoodSpawnTimer);
+        if (this.specialFoodTimer) clearInterval(this.specialFoodTimer);
+        
+        // Start spawning special food every 15 seconds
+        this.specialFoodSpawnTimer = setInterval(() => {
+            if (!this.gamePaused && this.gameRunning) {
+                this.generateSpecialFood();
+            }
+        }, 15000); // 15 seconds
+    }
+
+    generateSpecialFood() {
+        if (this.gameMode === 'classic') {
+            let newFood;
+            do {
+                newFood = {
+                    x: Math.floor(Math.random() * this.tileCount),
+                    y: Math.floor(Math.random() * this.tileCount),
+                    createdAt: Date.now(),
+                    type: 'special'
+                };
+            } while (
+                this.snake.some(segment => segment.x === newFood.x && segment.y === newFood.y) ||
+                this.obstacles.some(obstacle => 
+                    newFood.x >= obstacle.x && newFood.x < obstacle.x + obstacle.width &&
+                    newFood.y >= obstacle.y && newFood.y < obstacle.y + obstacle.height
+                )
+            );
+            this.specialFood = newFood;
+        } else {
+            let newFood;
+            do {
+                newFood = {
+                    x: Math.random() * (this.canvas.width - 40) + 20,
+                    y: Math.random() * (this.canvas.height - 40) + 20,
+                    createdAt: Date.now(),
+                    type: 'special'
+                };
+            } while (
+                this.modernSnake.segments.some(segment => {
+                    const distance = Math.sqrt(
+                        Math.pow(segment.x - newFood.x, 2) + Math.pow(segment.y - newFood.y, 2)
+                    );
+                    return distance < 30;
+                })
+            );
+            this.specialFood = newFood;
+        }
+
+        // Remove special food after 5 seconds
+        if (this.specialFoodTimer) clearInterval(this.specialFoodTimer);
+        this.specialFoodTimer = setTimeout(() => {
+            this.specialFood = null;
+        }, 5000);
+    }
+
     resetGame() {
         clearInterval(this.gameLoop);
         clearInterval(this.timerInterval);
+        clearInterval(this.specialFoodSpawnTimer);
+        clearInterval(this.specialFoodTimer);
         
         // Reset classic mode
         this.snake = [
@@ -585,6 +652,8 @@ class KurdishSnakeGame {
             
             if (head.x === this.food.x && head.y === this.food.y) {
                 this.eatFood();
+            } else if (this.specialFood && head.x === this.specialFood.x && head.y === this.specialFood.y) {
+                this.eatSpecialFood();
             } else {
                 this.snake.pop();
             }
@@ -669,6 +738,16 @@ class KurdishSnakeGame {
                 this.eatModernFood();
             }
             
+            // Check special food collision
+            if (this.specialFood) {
+                const specialFoodDistance = Math.sqrt(
+                    Math.pow(head.x - this.specialFood.x, 2) + Math.pow(head.y - this.specialFood.y, 2)
+                );
+                if (specialFoodDistance < 15) {
+                    this.eatSpecialFood();
+                }
+            }
+            
             this.drawGame();
         } catch (error) {
             console.error('Error in modern game update:', error);
@@ -690,6 +769,30 @@ class KurdishSnakeGame {
             clearInterval(this.gameLoop);
             this.gameLoop = setInterval(() => this.updateClassic(), this.gameSpeed);
         }
+    }
+
+    eatSpecialFood() {
+        const points = 20;  // Double points
+        this.score += points;
+        const coinsEarned = points * this.difficultySettings[this.difficulty].coinMultiplier * 2; // Double coins
+        this.coins += coinsEarned;
+        
+        // Add 3 segments instead of 1
+        if (this.gameMode === 'classic') {
+            const tail = this.snake[this.snake.length - 1];
+            for (let i = 0; i < 3; i++) {
+                this.snake.push({ ...tail });
+            }
+        } else {
+            const tail = this.modernSnake.segments[this.modernSnake.segments.length - 1];
+            for (let i = 0; i < 3; i++) {
+                this.modernSnake.segments.push({ ...tail });
+            }
+        }
+        
+        this.specialFood = null;
+        this.updateDisplay();
+        this.playSound('eat');
     }
     
     eatModernFood() {
@@ -1241,11 +1344,13 @@ class KurdishSnakeGame {
                 this.drawObstacles();
                 this.drawSnake();
                 this.drawBot();
+                if (this.specialFood) this.drawSpecialFood();
             } else {
                 this.drawObstacles(); // Draw obstacles first so they appear behind everything
                 this.drawBot(); // Draw bot before snake and food
                 this.drawModernSnake();
                 this.drawModernFood();
+                if (this.specialFood) this.drawSpecialFood();
             }
             
         } catch (error) {
@@ -1316,6 +1421,67 @@ class KurdishSnakeGame {
         this.ctx.fill();
         
         this.ctx.shadowBlur = 0;
+    }
+
+    drawSpecialFood() {
+        if (!this.specialFood) return;
+
+        const x = this.gameMode === 'classic' ? 
+            this.specialFood.x * this.gridSize + this.gridSize / 2 : 
+            this.specialFood.x;
+        const y = this.gameMode === 'classic' ? 
+            this.specialFood.y * this.gridSize + this.gridSize / 2 : 
+            this.specialFood.y;
+
+        // Calculate time remaining
+        const timeElapsed = Date.now() - this.specialFood.createdAt;
+        const timeRemaining = Math.max(0, 5000 - timeElapsed);
+        const progress = timeRemaining / 5000;
+
+        // Pulse animation
+        const pulseScale = 1 + Math.sin(Date.now() / 150) * 0.1;
+        const baseRadius = this.gameMode === 'classic' ? this.gridSize / 2 : 12;
+        const radius = baseRadius * pulseScale;
+
+        // Special fruit gradient with sparkle effect
+        const gradient = this.ctx.createRadialGradient(x, y, 0, x, y, radius);
+        gradient.addColorStop(0, '#ffd700'); // Gold center
+        gradient.addColorStop(0.5, '#ff4500'); // Orange middle
+        gradient.addColorStop(1, '#ff0000'); // Red edge
+
+        // Draw the special fruit
+        this.ctx.save();
+        this.ctx.beginPath();
+        this.ctx.arc(x, y, radius, 0, Math.PI * 2);
+        
+        // Add glow effect
+        this.ctx.shadowColor = '#ff0000';
+        this.ctx.shadowBlur = 20;
+        this.ctx.fillStyle = gradient;
+        this.ctx.fill();
+
+        // Draw sparkles
+        const sparkleCount = 5;
+        const time = Date.now() / 200;
+        for (let i = 0; i < sparkleCount; i++) {
+            const angle = (i / sparkleCount) * Math.PI * 2 + time;
+            const sparkleX = x + Math.cos(angle) * radius * 1.2;
+            const sparkleY = y + Math.sin(angle) * radius * 1.2;
+            
+            this.ctx.beginPath();
+            this.ctx.arc(sparkleX, sparkleY, 2, 0, Math.PI * 2);
+            this.ctx.fillStyle = '#ffffff';
+            this.ctx.fill();
+        }
+
+        // Draw timer arc
+        this.ctx.beginPath();
+        this.ctx.arc(x, y, radius * 1.5, -Math.PI / 2, -Math.PI / 2 + (2 * Math.PI * progress));
+        this.ctx.strokeStyle = `rgba(255, 255, 255, ${progress})`;
+        this.ctx.lineWidth = 2;
+        this.ctx.stroke();
+
+        this.ctx.restore();
     }
     
     getFoodColors() {
