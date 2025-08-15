@@ -13,9 +13,11 @@ html, body {
     min-height: 100vh;
     overflow-x: hidden;
     width: 100%;
-    touch-action: pan-y;
-    -ms-touch-action: pan-y;
-    -webkit-touch-action: pan-y;
+    touch-action: pan-y pinch-zoom;
+    -ms-touch-action: pan-y pinch-zoom;
+    -webkit-touch-action: pan-y pinch-zoom;
+    overscroll-behavior-y: none;
+    -webkit-overscroll-behavior-y: none;
 }
 
 body {
@@ -26,9 +28,17 @@ body {
 
 /* Game Container */
 #gamePage {
-    touch-action: pan-y;
-    max-width: 100%;
-    overflow-x: hidden;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    touch-action: none;
+    -webkit-touch-action: none;
+    -ms-touch-action: none;
+    overscroll-behavior: none;
+    -webkit-overscroll-behavior: none;
 }
 
 .game-canvas {
@@ -38,6 +48,7 @@ body {
     -webkit-touch-callout: none;
     position: relative;
     z-index: 2;
+    max-height: 100vh;
 }
 
 /* Mobile Responsiveness */
