@@ -34,7 +34,5 @@
     padding-top: 80px;
     padding-bottom: 120px;
     width: 100%;
-    min-height: 100vh;
-    position: relative;
-    background: inherit;
+    height: auto;
 }
