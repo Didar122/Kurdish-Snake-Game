@@ -33,8 +33,15 @@
 #gamePage {
     padding-top: 80px;
     padding-bottom: 120px;
-    position: relative;
-    height: auto;
-    overflow-y: auto;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow-y: scroll;
     -webkit-overflow-scrolling: touch;
+    height: auto;
+    min-height: 100%;
+    width: 100%;
+    z-index: 1;
 }
