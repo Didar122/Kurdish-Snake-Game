@@ -2235,8 +2235,8 @@ class KurdishSnakeGame {
             // Only create particles occasionally
             if (Math.random() > 0.3) return; // 30% chance to create particles
             
-            const offsetX = (Math.random() - 0.5) * 30; // Random offset from tail
-            const offsetY = (Math.random() - 0.5) * 30;
+            const offsetX = (Math.random() - 0.5) * 20; // Reduced horizontal spread
+            const offsetY = (Math.random() - 0.5) * 10; // Significantly reduced vertical spread
             
             const particle = document.createElement('div');
             particle.className = 'vip-particle';
@@ -2253,17 +2253,20 @@ class KurdishSnakeGame {
             particle.style.setProperty('--dy', `${Math.sin(angle) * distance}px`);
             
             particle.style.animation = 'coinFade 2s ease-out forwards'; // Slower animation
-            document.body.appendChild(particle);
             
-            // Position the particle with offset
+            // Use the same positioning approach as other skins
             const canvas = document.getElementById('gameCanvas');
             const canvasRect = canvas.getBoundingClientRect();
-            const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
-            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            const parentRect = canvas.offsetParent ? canvas.offsetParent.getBoundingClientRect() : {left:0,top:0};
+            const relLeft = canvasRect.left - parentRect.left;
+            const relTop = canvasRect.top - parentRect.top;
             
-            // Calculate exact position relative to the viewport and scroll position
-            particle.style.left = (canvasRect.left + x + offsetX + scrollLeft) + 'px';
-            particle.style.top = (canvasRect.top + y + offsetY + scrollTop) + 'px';
+            // Place particle absolutely inside the canvas's parent
+            particle.style.left = (relLeft + x + offsetX) + 'px';
+            particle.style.top = (relTop + y + offsetY) + 'px';
+            
+            // Append to canvas parent instead of body
+            (canvas.parentElement || document.body).appendChild(particle);
             
             // Remove after animation
             setTimeout(() => particle.remove(), 2000);
