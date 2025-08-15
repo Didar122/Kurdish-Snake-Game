@@ -1,9 +1,19 @@
 // Joystick Control for Modern Mode
 class JoystickController {
     constructor() {
+        // Wait for DOM to be ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => this.init());
+        } else {
+            this.init();
+        }
+    }
+
+    init() {
         this.setupJoystick();
         this.currentDirection = null;
         this.isActive = false;
+        this.watchGameMode();
     }
 
     setupJoystick() {
@@ -86,8 +96,26 @@ class JoystickController {
 
             // Trigger movement in game
             if (this.currentDirection && window.gameInstance) {
-                const event = new KeyboardEvent('keydown', { key: this.getKeyForDirection(this.currentDirection) });
-                document.dispatchEvent(event);
+                if (window.gameInstance.gameMode === 'modern') {
+                    // Use the appropriate control method for modern mode
+                    switch (this.currentDirection) {
+                        case 'up':
+                            window.gameInstance.modernSnake.angle = -Math.PI / 2;
+                            break;
+                        case 'down':
+                            window.gameInstance.modernSnake.angle = Math.PI / 2;
+                            break;
+                        case 'left':
+                            window.gameInstance.modernSnake.angle = Math.PI;
+                            break;
+                        case 'right':
+                            window.gameInstance.modernSnake.angle = 0;
+                            break;
+                    }
+                } else {
+                    const event = new KeyboardEvent('keydown', { key: this.getKeyForDirection(this.currentDirection) });
+                    document.dispatchEvent(event);
+                }
             }
         };
 
@@ -128,25 +156,33 @@ class JoystickController {
     }
 }
 
-// Initialize joystick when the page loads
-document.addEventListener('DOMContentLoaded', () => {
-    window.joystickController = new JoystickController();
-
-    // Watch for modern mode changes
-    const observer = new MutationObserver((mutations) => {
-        mutations.forEach((mutation) => {
-            if (mutation.attributeName === 'class') {
-                const isModernMode = document.body.classList.contains('modern-mode');
-                if (isModernMode) {
-                    window.joystickController.show();
-                } else {
-                    window.joystickController.hide();
-                }
+    watchGameMode() {
+        // Check for game mode changes
+        const checkGameMode = () => {
+            const mobileControls = document.querySelector('.mobile-controls');
+            if (mobileControls && window.gameInstance && window.gameInstance.gameMode === 'modern') {
+                mobileControls.style.display = 'none';
+                this.show();
+            } else if (mobileControls) {
+                mobileControls.style.display = 'block';
+                this.hide();
             }
-        });
-    });
+        };
 
-    observer.observe(document.body, {
-        attributes: true
-    });
-});
+        // Check initially and set up interval
+        setTimeout(checkGameMode, 1000);
+        setInterval(checkGameMode, 1000);
+    }
+}
+
+// Initialize the joystick controller
+const initJoystick = () => {
+    window.joystickController = new JoystickController();
+};
+
+// Initialize when the document is ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initJoystick);
+} else {
+    initJoystick();
+}
